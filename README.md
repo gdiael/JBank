@@ -1,6 +1,6 @@
 # Jbank
 
-Projeto para a disciplina ```DIM0517 - Gerência de Configuração e mudanças```.
+Projeto para a disciplina ```DIM0517 - Gerência de Configuração e Mudanças```.
 
 ## Alunos
 
@@ -10,3 +10,21 @@ Projeto para a disciplina ```DIM0517 - Gerência de Configuração e mudanças``
 ## Stack
 
 Nesse projeto, usaremos Java com Spring Boot Framework.
+
+## Instruções para execução
+
+### Requisitos
+
+- Java 17
+- Maven
+
+### Passo a passo
+
+Execute o seguinte comando no terminal
+
+```
+cd jbank
+./mvnw spring-boot:run
+```
+
+Obs.: caso esteja usando windows troque `./mvnw` por `nvnw.cmd`
