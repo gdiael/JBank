@@ -32,4 +32,17 @@ public class AccountService {
         Account account = repository.findByNumber(number);
         return account.getBalance();
     }
+
+    public boolean deposit(Long number, double amount) {
+        if (repository.existsByNumber(number) == false) {
+            System.out.println("Número de conta não existe!");
+            return false;
+        }
+
+        Account account = repository.findByNumber(number);
+        account.setBalance(account.getBalance() + amount);
+        repository.save(account);
+        return true;
+    }
+
 }

@@ -53,6 +53,19 @@ public class MainCli {
                         }
                         break;
 
+                    case 3:
+                        System.out.println("Digite número da conta: ");
+                        number = scanner.nextLong();
+                        System.out.println("Digite valor do crédito: ");
+                        double amount = scanner.nextDouble();
+                        res = accountService.deposit(number, amount);
+                        if (res) {
+                            System.out.println("Crédito realizado com sucesso!");
+                        } else {
+                            System.out.println("Não foi possível realizar crédito na conta [%d]!".formatted(number));
+                        }
+                        break;
+
                     default:
                         System.out.println("Saindo!");
                         running = false;
