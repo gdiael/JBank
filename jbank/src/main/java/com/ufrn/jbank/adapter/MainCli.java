@@ -19,7 +19,7 @@ public class MainCli {
     public void runCli() {
         System.out.println("Bem-vindo ao JBank CLI!");
 
-        // accountLoader.loadDummyAccounts();
+        accountLoader.loadDummyAccounts();
 
         try(Scanner scanner = new Scanner(System.in)) {
             boolean running = true;
@@ -106,3 +106,4 @@ public class MainCli {
     }
 
 }
+
