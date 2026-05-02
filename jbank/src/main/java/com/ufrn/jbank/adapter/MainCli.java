@@ -3,16 +3,24 @@ package com.ufrn.jbank.adapter;
 import java.util.Scanner;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.ufrn.jbank.service.AccountService;
 
+@Component
 public class MainCli {
     
     @Autowired
     private AccountService accountService;
+    
+    @Autowired
+    private AccountLoader accountLoader;
 
     public void runCli() {
         System.out.println("Bem-vindo ao JBank CLI!");
+        
+        // accountLoader.loadDummyAccounts();
+
         try(Scanner scanner = new Scanner(System.in)) {
             boolean running = true;
             while (running) {
@@ -27,10 +35,15 @@ public class MainCli {
                 switch (op) {
                     case 1:
                         System.out.println("Digite número da nova conta: ");
-                        long accNumb = scanner.nextLong();
-                        System.out.println("Não foi possível criar conta [%d]! Ainda não implementado!".formatted(accNumb));
+                        long number = scanner.nextLong();
+                        boolean res = accountService.createAccount(number);
+                        if (res) {
+                            System.out.println("Conta criada com sucesso!");
+                        } else {
+                            System.out.println("Não foi possível criar conta [%d]!".formatted(number));
+                        }
                         break;
-                
+                    
                     default:
                         System.out.println("Saindo!");
                         running = false;
