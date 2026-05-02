@@ -66,6 +66,19 @@ public class MainCli {
                         }
                         break;
 
+                    case 4:
+                        System.out.println("Digite número da conta: ");
+                        number = scanner.nextLong();
+                        System.out.println("Digite valor do débito: ");
+                        amount = scanner.nextDouble();
+                        res = accountService.withdraw(number, amount);
+                        if (res) {
+                            System.out.println("Débito realizado com sucesso!");
+                        } else {
+                            System.out.println("Não foi possível realizar débito na conta [%d]!".formatted(number));
+                        }
+                        break;
+
                     default:
                         System.out.println("Saindo!");
                         running = false;
