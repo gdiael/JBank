@@ -79,6 +79,21 @@ public class MainCli {
                         }
                         break;
 
+                    case 5:
+                        System.out.println("Digite número da conta de origem: ");
+                        long fromNumber = scanner.nextLong();
+                        System.out.println("Digite número da conta de destino: ");
+                        long toNumber = scanner.nextLong();
+                        System.out.println("Digite valor da transferência: ");
+                        amount = scanner.nextDouble();
+                        res = accountService.transfer(fromNumber, toNumber, amount);
+                        if (res) {
+                            System.out.println("Transferência realizada com sucesso!");
+                        } else {
+                            System.out.println("Não foi possível realizar transferência da conta [%d] para conta [%d]!".formatted(fromNumber, toNumber));
+                        }
+                        break;
+
                     default:
                         System.out.println("Saindo!");
                         running = false;

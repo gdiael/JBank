@@ -57,4 +57,24 @@ public class AccountService {
         return true;
     }
 
+    public boolean transfer(Long fromNumber, Long toNumber, double amount) {
+        if (repository.existsByNumber(fromNumber) == false) {
+            System.out.println("Número de conta 1 não existe!");
+            return false;
+        }
+        if (repository.existsByNumber(toNumber) == false) {
+            System.out.println("Número de conta 2 não existe!");
+            return false;
+        }
+
+        Account fromAccount = repository.findByNumber(fromNumber);
+        Account toAccount = repository.findByNumber(toNumber);
+
+        fromAccount.setBalance(fromAccount.getBalance() - amount);
+        toAccount.setBalance(toAccount.getBalance() + amount);
+
+        repository.save(fromAccount);
+        repository.save(toAccount);
+        return true;
+    }
 }
