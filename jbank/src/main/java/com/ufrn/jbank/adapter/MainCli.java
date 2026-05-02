@@ -9,16 +9,16 @@ import com.ufrn.jbank.service.AccountService;
 
 @Component
 public class MainCli {
-    
+
     @Autowired
     private AccountService accountService;
-    
+
     @Autowired
     private AccountLoader accountLoader;
 
     public void runCli() {
         System.out.println("Bem-vindo ao JBank CLI!");
-        
+
         // accountLoader.loadDummyAccounts();
 
         try(Scanner scanner = new Scanner(System.in)) {
@@ -43,16 +43,25 @@ public class MainCli {
                             System.out.println("Não foi possível criar conta [%d]!".formatted(number));
                         }
                         break;
-                    
+
+                    case 2:
+                        System.out.println("Digite número da conta: ");
+                        number = scanner.nextLong();
+                        double balance = accountService.getBalance(number);
+                        if (balance != Double.MIN_VALUE) {
+                            System.out.println("Saldo da conta [%d]: R$ %.2f".formatted(number, balance));
+                        }
+                        break;
+
                     default:
                         System.out.println("Saindo!");
                         running = false;
                         break;
                 }
-                
+
             }
         }
-        
+
     }
 
 }

@@ -8,7 +8,7 @@ import com.ufrn.jbank.repository.AccountRepository;
 
 @Service
 public class AccountService {
-    
+
     @Autowired
     private AccountRepository repository; // aqui a instância do repositório é injetada pelo spring
 
@@ -23,4 +23,13 @@ public class AccountService {
         return true;
     }
 
+    public double getBalance(Long number) {
+        if (repository.existsByNumber(number) == false) {
+            System.out.println("Número de conta não existe!");
+            return Double.MIN_VALUE;
+        }
+
+        Account account = repository.findByNumber(number);
+        return account.getBalance();
+    }
 }
