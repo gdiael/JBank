@@ -1,5 +1,6 @@
 package com.ufrn.jbank.adapter;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,7 +102,11 @@ public class MainCli {
                 }
 
             }
-        }
+        } catch (InputMismatchException e) {
+
+      System.out.println("Entrada inválida! Encerrando.");
+      return;
+    }
 
     }
 
