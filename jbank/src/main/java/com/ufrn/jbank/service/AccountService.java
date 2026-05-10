@@ -52,8 +52,16 @@ public class AccountService {
         }
 
         Account account = repository.findByNumber(number);
-        account.setBalance(account.getBalance() - amount);
+        Double value = account.getBalance() - amount;
+
+        if (value < 0) {
+          System.out.println("Saldo não pode ser negativo!");
+          return false;
+        }
+
+        account.setBalance(value);
         repository.save(account);
+
         return true;
     }
 
@@ -70,7 +78,14 @@ public class AccountService {
         Account fromAccount = repository.findByNumber(fromNumber);
         Account toAccount = repository.findByNumber(toNumber);
 
-        fromAccount.setBalance(fromAccount.getBalance() - amount);
+        Double value = fromAccount.getBalance() - amount;
+
+        if (value < 0) {
+          System.out.println("Saldo não pode ser negativo!");
+          return false;
+        }
+
+        fromAccount.setBalance(value);
         toAccount.setBalance(toAccount.getBalance() + amount);
 
         repository.save(fromAccount);
