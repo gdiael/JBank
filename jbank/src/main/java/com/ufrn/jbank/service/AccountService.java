@@ -34,6 +34,11 @@ public class AccountService {
     }
 
     public boolean deposit(Long number, double amount) {
+        if (amount < 0) {
+            System.out.println("Valor de depósito não pode ser negativo!");
+            return false;
+        }
+
         if (repository.existsByNumber(number) == false) {
             System.out.println("Número de conta não existe!");
             return false;
@@ -46,6 +51,11 @@ public class AccountService {
     }
 
     public boolean withdraw(Long number, double amount) {
+        if (amount < 0) {
+            System.out.println("Valor de saque não pode ser negativo!");
+            return false;
+        }
+
         if (repository.existsByNumber(number) == false) {
             System.out.println("Número de conta não existe!");
             return false;
@@ -66,6 +76,11 @@ public class AccountService {
     }
 
     public boolean transfer(Long fromNumber, Long toNumber, double amount) {
+        if (amount < 0) {
+            System.out.println("Valor de transferência não pode ser negativo!");
+            return false;
+        }
+
         if (repository.existsByNumber(fromNumber) == false) {
             System.out.println("Número de conta 1 não existe!");
             return false;
