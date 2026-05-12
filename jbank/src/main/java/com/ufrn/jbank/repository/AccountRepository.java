@@ -1,17 +1,19 @@
 package com.ufrn.jbank.repository;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
 import com.ufrn.jbank.model.Account;
+import com.ufrn.jbank.model.SavingsAccount;
 
 @Repository
 public class AccountRepository {
 
     private Map<Long, Account> accounts = new HashMap<>();
-    
+
     public void save(Account account) {
         accounts.put(account.getNumber(), account);
     }
@@ -23,5 +25,13 @@ public class AccountRepository {
     public boolean existsByNumber(Long number) {
         return accounts.containsKey(number);
     }
-    
+
+    public List<SavingsAccount> findAllSavingsAccounts() {
+        return accounts.values().stream()
+                .filter(account -> account instanceof SavingsAccount)
+                .map(account -> (SavingsAccount) account)
+                .toList();
+    }
+
 }
+

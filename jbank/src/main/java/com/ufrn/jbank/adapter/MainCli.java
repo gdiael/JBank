@@ -27,10 +27,13 @@ public class MainCli {
             while (running) {
                 System.out.println("1 - Criar conta simples");
                 System.out.println("2 - Criar conta de bônus");
-                System.out.println("3 - Consultar saldo");
-                System.out.println("4 - Crédito");
-                System.out.println("5 - Débito");
-                System.out.println("6 - Transferência");
+                System.out.println("3 - Criar conta poupança");
+                System.out.println("4 - Consultar saldo");
+                System.out.println("5 - Crédito");
+                System.out.println("6 - Débito");
+                System.out.println("7 - Transferência");
+                System.out.println("8 - Aplicar juros em todas as contas poupança");
+                System.out.println("0 - Sair");
 
                 int op = scanner.nextInt();
 
@@ -45,7 +48,7 @@ public class MainCli {
                             System.out.println("Não foi possível criar conta [%d]!".formatted(number));
                         }
                         break;
-                    
+
                     case 2:
                         System.out.println("Digite número da nova conta de bônus: ");
                         number = scanner.nextLong();
@@ -58,6 +61,17 @@ public class MainCli {
                         break;
 
                     case 3:
+                        System.out.println("Digite número da nova conta poupança: ");
+                        number = scanner.nextLong();
+                        res = accountService.createSavingsAccount(number);
+                        if (res) {
+                            System.out.println("Conta poupança criada com sucesso!");
+                        } else {
+                            System.out.println("Não foi possível criar conta poupança [%d]!".formatted(number));
+                        }
+                        break;
+
+                    case 4:
                         System.out.println("Digite número da conta: ");
                         number = scanner.nextLong();
                         double balance = accountService.getBalance(number);
@@ -66,7 +80,7 @@ public class MainCli {
                         }
                         break;
 
-                    case 4:
+                    case 5:
                         System.out.println("Digite número da conta: ");
                         number = scanner.nextLong();
                         System.out.println("Digite valor do crédito: ");
@@ -79,7 +93,7 @@ public class MainCli {
                         }
                         break;
 
-                    case 5:
+                    case 6:
                         System.out.println("Digite número da conta: ");
                         number = scanner.nextLong();
                         System.out.println("Digite valor do débito: ");
@@ -92,7 +106,7 @@ public class MainCli {
                         }
                         break;
 
-                    case 6:
+                    case 7:
                         System.out.println("Digite número da conta de origem: ");
                         long fromNumber = scanner.nextLong();
                         System.out.println("Digite número da conta de destino: ");
@@ -105,6 +119,13 @@ public class MainCli {
                         } else {
                             System.out.println("Não foi possível realizar transferência da conta [%d] para conta [%d]!".formatted(fromNumber, toNumber));
                         }
+                        break;
+
+                    case 8:
+                        System.out.println("Digite a taxa de juros  (valor em porcentagem, sem o %): ");
+                        double interestRate = scanner.nextDouble();
+                        accountService.applyInterestToAllSavingsAccounts(interestRate / 100.0);
+                        System.out.println("Juros aplicados com sucesso!");
                         break;
 
                     default:
@@ -123,4 +144,5 @@ public class MainCli {
     }
 
 }
+
 
