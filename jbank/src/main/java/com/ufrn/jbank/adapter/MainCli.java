@@ -25,11 +25,12 @@ public class MainCli {
         try(Scanner scanner = new Scanner(System.in)) {
             boolean running = true;
             while (running) {
-                System.out.println("1 - Criar conta");
-                System.out.println("2 - Consultar saldo");
-                System.out.println("3 - Crédito");
-                System.out.println("4 - Débito");
-                System.out.println("5 - Transferência");
+                System.out.println("1 - Criar conta simples");
+                System.out.println("2 - Criar conta de bônus");
+                System.out.println("3 - Consultar saldo");
+                System.out.println("4 - Crédito");
+                System.out.println("5 - Débito");
+                System.out.println("6 - Transferência");
 
                 int op = scanner.nextInt();
 
@@ -44,8 +45,19 @@ public class MainCli {
                             System.out.println("Não foi possível criar conta [%d]!".formatted(number));
                         }
                         break;
-
+                    
                     case 2:
+                        System.out.println("Digite número da nova conta de bônus: ");
+                        number = scanner.nextLong();
+                        res = accountService.createBonusAccount(number);
+                        if (res) {
+                            System.out.println("Conta de bônus criada com sucesso!");
+                        } else {
+                            System.out.println("Não foi possível criar conta de bônus [%d]!".formatted(number));
+                        }
+                        break;
+
+                    case 3:
                         System.out.println("Digite número da conta: ");
                         number = scanner.nextLong();
                         double balance = accountService.getBalance(number);
@@ -54,7 +66,7 @@ public class MainCli {
                         }
                         break;
 
-                    case 3:
+                    case 4:
                         System.out.println("Digite número da conta: ");
                         number = scanner.nextLong();
                         System.out.println("Digite valor do crédito: ");
@@ -67,7 +79,7 @@ public class MainCli {
                         }
                         break;
 
-                    case 4:
+                    case 5:
                         System.out.println("Digite número da conta: ");
                         number = scanner.nextLong();
                         System.out.println("Digite valor do débito: ");
@@ -80,7 +92,7 @@ public class MainCli {
                         }
                         break;
 
-                    case 5:
+                    case 6:
                         System.out.println("Digite número da conta de origem: ");
                         long fromNumber = scanner.nextLong();
                         System.out.println("Digite número da conta de destino: ");
