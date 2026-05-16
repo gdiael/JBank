@@ -12,13 +12,13 @@ public class AccountService {
     @Autowired
     private AccountRepository repository; // aqui a instância do repositório é injetada pelo spring
 
-    public boolean createAccount(Long number) {
+    public boolean createAccount(Long number, Double value) {
         if (repository.existsByNumber(number)) {
             System.out.println("Número de conta já existe!");
             return false;
         }
 
-        Account account = new Account(number, 0.0);
+        Account account = new Account(number, value);
         repository.save(account);
         return true;
     }
