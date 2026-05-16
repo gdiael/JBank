@@ -17,13 +17,13 @@ public class AccountService {
     @Autowired
     private BonusCalculatorService bonusCalculatorService;
 
-    public boolean createAccount(Long number, Long value) {
+    public boolean createAccount(Long number) {
         if (repository.existsByNumber(number)) {
             System.out.println("Número de conta já existe!");
             return false;
         }
 
-        Account account = new Account(number, value,-1000.0);
+        Account account = new Account(number, 0, -1000.0);
         repository.save(account);
         return true;
     }
@@ -39,13 +39,13 @@ public class AccountService {
         return true;
     }
 
-    public boolean createSavingsAccount(Long number) {
+    public boolean createSavingsAccount(Long number, Long value) {
         if (repository.existsByNumber(number)) {
             System.out.println("Número de conta já existe!");
             return false;
         }
 
-        SavingsAccount account = new SavingsAccount(number, 0.0, 0.0);
+        SavingsAccount account = new SavingsAccount(number, value, 0.0);
         repository.save(account);
         return true;
     }

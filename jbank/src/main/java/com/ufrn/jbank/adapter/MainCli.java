@@ -42,15 +42,8 @@ public class MainCli {
                         System.out.println("Digite número da nova conta: ");
                         long number = scanner.nextLong();
 
-                        System.out.println("Digite o saldo inicial: ");
-                        long value = scanner.nextLong();
 
-                        if (value < 0) {
-                        System.out.println("Saldo inicial não pode ser negativo!");
-                        return;
-                        }
-
-                        boolean res = accountService.createAccount(number, value);
+                        boolean res = accountService.createAccount(number);
                         if (res) {
                             System.out.println("Conta criada com sucesso!");
                         } else {
@@ -72,7 +65,16 @@ public class MainCli {
                     case 3:
                         System.out.println("Digite número da nova conta poupança: ");
                         number = scanner.nextLong();
-                        res = accountService.createSavingsAccount(number);
+
+                        System.out.println("Digite o saldo inicial: ");
+                        long value = scanner.nextLong();
+
+                        if (value < 0) {
+                        System.out.println("Saldo inicial não pode ser negativo!");
+                        return;
+                        }
+
+                        res = accountService.createSavingsAccount(number, value);
                         if (res) {
                             System.out.println("Conta poupança criada com sucesso!");
                         } else {
