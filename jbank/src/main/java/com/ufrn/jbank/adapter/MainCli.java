@@ -37,7 +37,16 @@ public class MainCli {
                     case 1:
                         System.out.println("Digite número da nova conta: ");
                         long number = scanner.nextLong();
-                        boolean res = accountService.createAccount(number);
+
+                        System.out.println("Digite o saldo inicial: ");
+                        double value = scanner.nextDouble();
+
+                        if (value < 0.0) {
+                            System.out.println("Saldo inicial não pode ser negativo!");
+                            return;
+                        }
+
+                        boolean res = accountService.createAccount(number, value);
                         if (res) {
                             System.out.println("Conta criada com sucesso!");
                         } else {
