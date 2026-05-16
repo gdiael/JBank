@@ -47,6 +47,7 @@ public class MainCli {
                         }
 
                         boolean res = accountService.createAccount(number, value);
+                    
                         if (res) {
                             System.out.println("Conta criada com sucesso!");
                         } else {
