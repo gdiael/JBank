@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ufrn.jbank.model.Account;
+import com.ufrn.jbank.model.BonusAccount;
+import com.ufrn.jbank.model.SavingsAccount;
 import com.ufrn.jbank.repository.AccountRepository;
 
 @Service
@@ -12,6 +14,9 @@ public class AccountService {
     @Autowired
     private AccountRepository repository; // aqui a instância do repositório é injetada pelo spring
 
+    @Autowired
+    private BonusCalculatorService bonusCalculatorService;
+
     public boolean createAccount(Long number, Double value) {
         if (repository.existsByNumber(number)) {
             System.out.println("Número de conta já existe!");
@@ -19,6 +24,28 @@ public class AccountService {
         }
 
         Account account = new Account(number, value);
+        repository.save(account);
+        return true;
+    }
+
+    public boolean createBonusAccount(Long number) {
+        if (repository.existsByNumber(number)) {
+            System.out.println("Número de conta já existe!");
+            return false;
+        }
+
+        Account account = new BonusAccount(number, 0, 10); // contas de bonus novas devem ser criadas com 10 pontos de bonus
+        repository.save(account);
+        return true;
+    }
+
+    public boolean createSavingsAccount(Long number) {
+        if (repository.existsByNumber(number)) {
+            System.out.println("Número de conta já existe!");
+            return false;
+        }
+
+        SavingsAccount account = new SavingsAccount(number, 0.0);
         repository.save(account);
         return true;
     }
@@ -46,6 +73,11 @@ public class AccountService {
 
         Account account = repository.findByNumber(number);
         account.setBalance(account.getBalance() + amount);
+
+        if (account instanceof BonusAccount) {
+            bonusCalculatorService.applyDepositPoints((BonusAccount) account, amount);
+        }
+
         repository.save(account);
         return true;
     }
@@ -103,8 +135,20 @@ public class AccountService {
         fromAccount.setBalance(value);
         toAccount.setBalance(toAccount.getBalance() + amount);
 
+        if (toAccount instanceof BonusAccount) {
+            bonusCalculatorService.applyTransferPoints((BonusAccount) toAccount, amount);
+        }
+
         repository.save(fromAccount);
         repository.save(toAccount);
         return true;
     }
+
+    public void applyInterestToAllSavingsAccounts(double interestRate) {
+        repository.findAllSavingsAccounts().forEach(account -> {
+            account.applyInterest(interestRate);
+            repository.save(account);
+        });
+    }
+
 }
