@@ -12,7 +12,7 @@ public class BonusCalculatorService {
     }
 
     public int calculateTransferPoints(double value) {
-        return (int) (value / 200.0);
+        return (int) (value / 150.0);
     }
 
     public void applyDepositPoints(BonusAccount account, double value) {
