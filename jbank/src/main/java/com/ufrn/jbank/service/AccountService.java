@@ -60,6 +60,10 @@ public class AccountService {
         return account.getBalance();
     }
 
+    public Account findAccount(Long number) {
+        return repository.findByNumber(number);
+    }
+
     public boolean deposit(Long number, double amount) {
         if (amount < 0) {
             System.out.println("Valor de depósito não pode ser negativo!");
