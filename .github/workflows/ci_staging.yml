@@ -38,25 +38,29 @@ jobs:
           if [[ "$SOURCE_BRANCH" == bugfix* ]]; then
             # ── BUGFIX: incrementa Z em rc-X.Y.Z ──────────────────────────────
 
-            # Pega o rc-X.Y mais recente (ignora o Z por enquanto)
+            # Pega o rc-X.Y mais recente (apenas tags de 2 níveis, ignora Z)
             LATEST_XY=$(git tag --list 'rc-*' \
-              | grep -E '^rc-[0-9]+\.[0-9]+(\.[0-9]+)?$' \
+              | grep -E '^rc-[0-9]+\.[0-9]+$' \
               | sed 's/^rc-//' \
               | awk -F. '{ printf "%05d.%05d\t%s\n", $1, $2, $0 }' \
               | sort -t$'\t' -k1,1 -rn \
               | head -1 \
-              | awk -F$'\t' '{print $2}' \
-              | sed 's/\.[0-9]*$//' \
-              | sed 's/^\([0-9]*\.[0-9]*\)$/\1/')
+              | awk -F$'\t' '{print $2}')
 
-            echo "Maior X.Y detectado: $LATEST_XY"
+            if [ -z "$LATEST_XY" ]; then
+              echo "Nenhuma tag rc-X.Y encontrada, começando em rc-1.0"
+              LATEST_XY="1.0"
+              LATEST_Z=""
+            else
+              echo "Maior X.Y detectado: $LATEST_XY"
 
-            # Entre as tags com esse X.Y, acha o maior Z
-            LATEST_Z=$(git tag --list "rc-${LATEST_XY}.*" \
-              | grep -E "^rc-${LATEST_XY//./\\.}\.[0-9]+$" \
-              | sed "s/^rc-${LATEST_XY//./\\.}\.//" \
-              | sort -n \
-              | tail -1)
+              # Entre as tags com esse X.Y, acha o maior Z
+              LATEST_Z=$(git tag --list "rc-${LATEST_XY}.*" \
+                | grep -E "^rc-${LATEST_XY//./\\.}\.[0-9]+$" \
+                | sed "s/^rc-${LATEST_XY//./\\.}\.//" \
+                | sort -n \
+                | tail -1)
+            fi
 
             if [ -z "$LATEST_Z" ]; then
               # Existe rc-X.Y sem Z → Z começa em 0, nova tag é X.Y.1
@@ -112,38 +116,36 @@ jobs:
 
       - name: Resolver dependências
         working-directory: jbank
-        run: ./mvnw dependency:resolve
+        run: ./mvnw -B dependency:resolve
 
       # ─────────────────────────────────────────
       # 5. BUILD
       # ─────────────────────────────────────────
       - name: Build do sistema
         working-directory: jbank
-        run: ./mvnw compile
+        run: ./mvnw -B compile
 
       # ─────────────────────────────────────────
       # 6. QUALITY — PMD (análise estática)
       # ─────────────────────────────────────────
       - name: Análise estática com PMD
         working-directory: jbank
-        run: ./mvnw pmd:check
+        run: ./mvnw -B pmd:check
         continue-on-error: true
-        # Gera warnings mas não trava o workflow.
-        # Requer o plugin no pom.xml (ver nota abaixo).
 
       # ─────────────────────────────────────────
       # 7. TESTES UNITÁRIOS
       # ─────────────────────────────────────────
       - name: Executar testes unitários
         working-directory: jbank
-        run: ./mvnw test
+        run: ./mvnw -B test
 
       # ─────────────────────────────────────────
       # 8. EMPACOTAR
       # ─────────────────────────────────────────
       - name: Empacotar aplicação
         working-directory: jbank
-        run: ./mvnw package -DskipTests
+        run: ./mvnw -B package -DskipTests
 
       - name: Criar ZIP do artefato
         run: |
