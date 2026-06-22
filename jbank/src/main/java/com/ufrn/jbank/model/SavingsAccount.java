@@ -7,8 +7,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class SavingsAccount extends Account {
 
-  public SavingsAccount(Long number, double balance) {
-    super(number, balance);
+  public SavingsAccount(Long number, double balance, double minAmount) {
+    super(number, balance, minAmount);
   }
 
   public void applyInterest(double interestRate) {
