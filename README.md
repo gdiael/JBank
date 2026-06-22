@@ -20,7 +20,7 @@ Nesse projeto, usaremos Java com Spring Boot Framework.
 
 ### Passo a passo
 
-Execute o seguinte comando no terminal
+Execute o seguinte comando no terminal.
 
 ```
 cd jbank
@@ -50,3 +50,4 @@ O pipeline é executado a cada `push` ou `pull request` na branch `develop`.
 ### Tags
 
 A cada execução bem-sucedida do pipeline, uma tag no formato `build-NNN` é gerada automaticamente, identificando de forma única cada configuração validada.
+
