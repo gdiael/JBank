@@ -13,7 +13,7 @@ public class AccountLoader {
     private AccountRepository repository;
 
     public void loadDummyAccounts() {
-        repository.save(new Account(12345L, 1000.0,0));
+        repository.save(new Account(12344L, 1000.0,0));
         repository.save(new Account(67890L, 2000.0,0));
         repository.save(new Account(11223L, 3500.0,0));
         repository.save(new Account(44556L, 150.75,0));
