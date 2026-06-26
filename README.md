@@ -49,4 +49,4 @@ O pipeline é executado a cada `push` ou `pull request` na branch `develop`.
 
 ### Tags
 
-A cada execução bem-sucedida do pipeline, uma tag no formato `build-NNN` é gerada automaticamente, identificando de forma única cada configuração validada.
+A cada execução bem sucedida do pipeline, uma tag no formato `build-NNN` é gerada automaticamente, identificando de forma única cada configuração válida.
