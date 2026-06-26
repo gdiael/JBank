@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class Account {
     private long number;
     private double balance;
+    private double minAmount;
 }

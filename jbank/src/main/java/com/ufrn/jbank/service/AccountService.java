@@ -23,7 +23,7 @@ public class AccountService {
             return false;
         }
 
-        Account account = new Account(number, value);
+        Account account = new Account(number, value, -1000.0);
         repository.save(account);
         return true;
     }
@@ -34,18 +34,18 @@ public class AccountService {
             return false;
         }
 
-        Account account = new BonusAccount(number, 0, 10); // contas de bonus novas devem ser criadas com 10 pontos de bonus
+        Account account = new BonusAccount(number, 0, 10, -1000.0); // contas de bonus novas devem ser criadas com 10 pontos de bonus
         repository.save(account);
         return true;
     }
 
-    public boolean createSavingsAccount(Long number) {
+    public boolean createSavingsAccount(Long number, Double value) {
         if (repository.existsByNumber(number)) {
             System.out.println("Número de conta já existe!");
             return false;
         }
 
-        SavingsAccount account = new SavingsAccount(number, 0.0);
+        SavingsAccount account = new SavingsAccount(number, value, 0.0);
         repository.save(account);
         return true;
     }
@@ -58,6 +58,10 @@ public class AccountService {
 
         Account account = repository.findByNumber(number);
         return account.getBalance();
+    }
+
+    public Account findAccount(Long number) {
+        return repository.findByNumber(number);
     }
 
     public boolean deposit(Long number, double amount) {
@@ -96,8 +100,8 @@ public class AccountService {
         Account account = repository.findByNumber(number);
         Double value = account.getBalance() - amount;
 
-        if (value < 0) {
-          System.out.println("Saldo não pode ser negativo!");
+        if (value < account.getMinAmount()) {
+          System.out.println("Saldo não pode ser menor que %.2f!".formatted(account.getMinAmount()));
           return false;
         }
 
@@ -127,8 +131,8 @@ public class AccountService {
 
         Double value = fromAccount.getBalance() - amount;
 
-        if (value < 0) {
-          System.out.println("Saldo não pode ser negativo!");
+        if (value < fromAccount.getMinAmount()) {
+          System.out.println("Saldo não pode ser menor que %.2f!".formatted(fromAccount.getMinAmount()));
           return false;
         }
 

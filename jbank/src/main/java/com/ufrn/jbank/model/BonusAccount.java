@@ -8,8 +8,8 @@ import lombok.EqualsAndHashCode;
 public class BonusAccount extends Account {
     private int bonusPoints;
 
-    public BonusAccount(long number, double balance, int bonusPoints) {
-        super(number, balance);
+    public BonusAccount(long number, double balance, int bonusPoints, double minAmount) {
+        super(number, balance, minAmount);
         this.bonusPoints = bonusPoints;
     }
 

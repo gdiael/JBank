@@ -20,7 +20,7 @@ Nesse projeto, usaremos Java com Spring Boot Framework.
 
 ### Passo a passo
 
-Execute o seguinte comando no terminal
+Execute o seguinte comando no terminal.
 
 ```
 cd jbank
@@ -28,3 +28,25 @@ cd jbank
 ```
 
 Obs.: caso esteja usando windows troque `./mvnw` por `nvnw.cmd`
+
+## Pipeline CI/CD
+
+O projeto utiliza **GitHub Actions** para integração e entrega contínuas.
+
+### Gatilhos
+
+O pipeline é executado a cada `push` ou `pull request` na branch `develop`.
+
+### Etapas
+
+| Etapa | Descrição |
+|---|---|
+| Resolver dependências | `./mvnw dependency:resolve` |
+| Build | `./mvnw compile` |
+| Testes unitários | `./mvnw test` |
+| Imagem Docker | `docker build -t jbank:<build>` |
+| Tag | Cria tag `build-<número>` no repositório |
+
+### Tags
+
+A cada execução bem-sucedida do pipeline, uma tag no formato `build-NNN` é gerada automaticamente, identificando de forma única cada configuração válida.

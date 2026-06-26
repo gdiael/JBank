@@ -13,6 +13,7 @@ import com.ufrn.jbank.model.SavingsAccount;
 public class AccountRepository {
 
     private Map<Long, Account> accounts = new HashMap<>();
+
     public void save(Account account) {
         accounts.put(account.getNumber(), account);
     }

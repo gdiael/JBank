@@ -6,6 +6,9 @@ import java.util.Scanner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.ufrn.jbank.model.Account;
+import com.ufrn.jbank.model.BonusAccount;
+import com.ufrn.jbank.model.SavingsAccount;
 import com.ufrn.jbank.service.AccountService;
 
 @Component
@@ -22,8 +25,8 @@ public class MainCli {
 
         accountLoader.loadDummyAccounts();
 
+        boolean running = true;
         try(Scanner scanner = new Scanner(System.in)) {
-            boolean running = true;
             while (running) {
                 System.out.println("1 - Criar conta simples");
                 System.out.println("2 - Criar conta de bônus");
@@ -33,6 +36,7 @@ public class MainCli {
                 System.out.println("6 - Débito");
                 System.out.println("7 - Transferência");
                 System.out.println("8 - Aplicar juros em todas as contas poupança");
+                System.out.println("9 - Consultar conta");
                 System.out.println("0 - Sair");
 
                 int op = scanner.nextInt();
@@ -51,7 +55,7 @@ public class MainCli {
                         }
 
                         boolean res = accountService.createAccount(number, value);
-                    
+
                         if (res) {
                             System.out.println("Conta criada com sucesso!");
                         } else {
@@ -73,7 +77,16 @@ public class MainCli {
                     case 3:
                         System.out.println("Digite número da nova conta poupança: ");
                         number = scanner.nextLong();
-                        res = accountService.createSavingsAccount(number);
+
+                        System.out.println("Digite o saldo inicial: ");
+                        Double valueSave = scanner.nextDouble();
+
+                        if (valueSave < 0) {
+                            System.out.println("Saldo inicial não pode ser negativo!");
+                            return;
+                        }
+
+                        res = accountService.createSavingsAccount(number, valueSave);
                         if (res) {
                             System.out.println("Conta poupança criada com sucesso!");
                         } else {
@@ -138,6 +151,32 @@ public class MainCli {
                         System.out.println("Juros aplicados com sucesso!");
                         break;
 
+                    case 9: {
+                        System.out.println("Digite número da conta: ");
+                        long contaNumber = scanner.nextLong();
+                        Account account = accountService.findAccount(contaNumber);
+                        if (account == null) {
+                            System.out.println("Número de conta não existe!");
+                        } else {
+                            String tipo;
+                            if (account instanceof BonusAccount) {
+                                tipo = "Bônus";
+                            } else if (account instanceof SavingsAccount) {
+                                tipo = "Poupança";
+                            } else {
+                                tipo = "Simples";
+                            }
+                            System.out.println("Tipo: " + tipo);
+                            System.out.println("Número: " + account.getNumber());
+                            System.out.println("Saldo: R$ %.2f".formatted(account.getBalance()));
+                            if (account instanceof BonusAccount bonus) {
+                                System.out.println("Bônus: " + bonus.getBonusPoints());
+                            }
+                        }
+                        break;
+                    }
+
+                    case 0:
                     default:
                         System.out.println("Saindo!");
                         running = false;
@@ -154,4 +193,6 @@ public class MainCli {
     }
 
 }
+
+
 
