@@ -72,6 +72,40 @@ docker run -it -p 8080:8080 gdiael/jbank:build-007
 
 A aplicação ficará disponível em `http://localhost:8080`.
 
+## Git Hooks
+
+O projeto utiliza **client-side Git Hooks** para padronizar as mensagens de commit.
+
+### Regras
+
+Toda mensagem de commit deve seguir o formato `#NUM_ISSUE – MENSAGEM` e o `#NUM_ISSUE` deve referenciar uma issue existente no repositório do GitHub. Exemplo:
+
+```
+#33 – Correção da mensagem da tela principal
+```
+
+Commits que não seguirem esse formato ou referenciarem issues inexistentes serão **rejeitados localmente**.
+
+### Instalação
+
+Após clonar o repositório, execute uma única vez na raiz do projeto:
+
+```bash
+bash hooks/install.sh
+```
+
+O script copia o hook `commit-msg` para `.git/hooks/` e já fica funcionando automaticamente para todos os commits seguintes.
+
+### Validação remota
+
+A mesma verificação é feita no repositório remoto através do workflow `.github/workflows/pr-check.yml`, que valida o título do Pull Request no momento da abertura ou edição.
+
+### Fechando issues automaticamente
+
+Para fechar a issue automaticamente ao mergear um PR, adicione `Closes #X` (ou `Fixes #X`, `Resolves #X`) na **descrição do Pull Request** — não na mensagem do commit.
+
+---
+
 ## Endpoints
 
 Base URL: `http://localhost:8080/banco/conta`
