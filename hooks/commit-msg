@@ -1,0 +1,34 @@
+#!/bin/bash
+# commit-msg hook — Valida formato #NUM_ISSUE – MENSAGEM e existência da issue no GitHub
+
+COMMIT_MSG_FILE="$1"
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# Verificação 1: Formato #NUM_ISSUE – MENSAGEM
+if ! echo "$COMMIT_MSG" | grep -qP '^#[0-9]+\s[–-]\s.+'; then
+    echo "ERRO: A mensagem do commit deve seguir o formato: #NUM_ISSUE – MENSAGEM"
+    echo "Exemplo: #33 – Correção da mensagem da tela principal"
+    exit 1
+fi
+
+# Verificação 2: Issue existe no GitHub
+ISSUE_NUM=$(echo "$COMMIT_MSG" | sed -E 's/^#([0-9]+).*/\1/')
+REPO_URL=$(git config --get remote.origin.url)
+REPO_PATH=$(echo "$REPO_URL" | sed -E 's|.*github\.com[:/]||; s|\.git$||')
+
+if [ -z "$REPO_PATH" ]; then
+    echo "AVISO: Não foi possível determinar o repositório remoto. Commit permitido."
+    exit 0
+fi
+
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://api.github.com/repos/$REPO_PATH/issues/$ISSUE_NUM" 2>/dev/null)
+
+if [ "$HTTP_CODE" = "404" ]; then
+    echo "ERRO: Issue #$ISSUE_NUM não existe no repositório $REPO_PATH"
+    echo "Certifique-se de que a issue foi criada no GitHub antes de referenciá-la."
+    exit 1
+elif [ "$HTTP_CODE" = "000" ]; then
+    echo "AVISO: Não foi possível verificar a issue #$ISSUE_NUM (sem conexão com a internet). Commit permitido."
+elif [ "$HTTP_CODE" != "200" ]; then
+    echo "AVISO: GitHub API retornou HTTP $HTTP_CODE ao verificar a issue #$ISSUE_NUM. Commit permitido."
+fi
