@@ -1,0 +1,44 @@
+name: PR Title Check
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  check-pr-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verificar formato do título do PR
+        run: |
+          TITLE="${{ github.event.pull_request.title }}"
+          echo "Título do PR: $TITLE"
+
+          if ! echo "$TITLE" | grep -qP '^#[0-9]+\s[–-]\s.+'; then
+            echo "::error::O título do PR deve seguir o formato: #NUM_ISSUE – MENSAGEM"
+            echo "::error::Exemplo: #33 – Correção da mensagem da tela principal"
+            exit 1
+          fi
+
+          echo "Formato do título do PR OK."
+
+      - name: Verificar existência da issue no GitHub
+        run: |
+          TITLE="${{ github.event.pull_request.title }}"
+          ISSUE_NUM=$(echo "$TITLE" | sed -E 's/^#([0-9]+).*/\1/')
+          REPO="${{ github.repository }}"
+
+          echo "Verificando issue #$ISSUE_NUM em $REPO..."
+
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            "https://api.github.com/repos/$REPO/issues/$ISSUE_NUM" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json")
+
+          if [ "$HTTP_CODE" = "404" ]; then
+            echo "::error::Issue #$ISSUE_NUM não existe no repositório $REPO"
+            exit 1
+          elif [ "$HTTP_CODE" = "200" ]; then
+            echo "Issue #$ISSUE_NUM verificada com sucesso."
+          else
+            echo "::warning::GitHub API retornou HTTP $HTTP_CODE. Verificação não pôde ser concluída."
+          fi
