@@ -12,13 +12,10 @@ jobs:
         run: |
           TITLE="${{ github.event.pull_request.title }}"
           echo "Título do PR: $TITLE"
-
           if ! echo "$TITLE" | grep -qP '^#[0-9]+\s[–-]\s.+'; then
             echo "::error::O título do PR deve seguir o formato: #NUM_ISSUE – MENSAGEM"
-            echo "::error::Exemplo: #33 – Correção da mensagem da tela principal"
             exit 1
           fi
-
           echo "Formato do título do PR OK."
 
       - name: Verificar existência da issue no GitHub
@@ -26,19 +23,72 @@ jobs:
           TITLE="${{ github.event.pull_request.title }}"
           ISSUE_NUM=$(echo "$TITLE" | sed -E 's/^#([0-9]+).*/\1/')
           REPO="${{ github.repository }}"
-
-          echo "Verificando issue #$ISSUE_NUM em $REPO..."
-
           HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
             "https://api.github.com/repos/$REPO/issues/$ISSUE_NUM" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github+json")
-
           if [ "$HTTP_CODE" = "404" ]; then
             echo "::error::Issue #$ISSUE_NUM não existe no repositório $REPO"
             exit 1
           elif [ "$HTTP_CODE" = "200" ]; then
             echo "Issue #$ISSUE_NUM verificada com sucesso."
           else
-            echo "::warning::GitHub API retornou HTTP $HTTP_CODE. Verificação não pôde ser concluída."
+            echo "::warning::GitHub API retornou HTTP $HTTP_CODE."
           fi
+
+  check-commits:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verificar mensagens dos commits do PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          BASE=${{ github.event.pull_request.base.sha }}
+          HEAD=${{ github.event.pull_request.head.sha }}
+          FAILED=0
+
+          while IFS=' ' read -r sha msg; do
+            echo "---"
+            echo "Commit: $sha"
+            echo "Mensagem: $msg"
+
+            # Verificação 1: formato
+            if ! echo "$msg" | grep -qP '^#[0-9]+\s[–-]\s.+'; then
+              echo "::error::Commit $sha com formato inválido: '$msg'"
+              echo "::error::Formato esperado: #NUM_ISSUE – MENSAGEM"
+              FAILED=1
+              continue
+            fi
+            echo "Formato OK."
+
+            # Verificação 2: issue existe
+            ISSUE_NUM=$(echo "$msg" | sed -E 's/^#([0-9]+).*/\1/')
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+              "https://api.github.com/repos/$REPO/issues/$ISSUE_NUM" \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json")
+
+            if [ "$HTTP_CODE" = "404" ]; then
+              echo "::error::Commit $sha referencia issue #$ISSUE_NUM que não existe."
+              FAILED=1
+            elif [ "$HTTP_CODE" = "200" ]; then
+              echo "Issue #$ISSUE_NUM OK."
+            else
+              echo "::warning::GitHub API retornou HTTP $HTTP_CODE para issue #$ISSUE_NUM."
+            fi
+
+          done < <(git log "$BASE..$HEAD" --no-merges --format="%H %s")
+
+          if [ "$FAILED" = "1" ]; then
+            echo "---"
+            echo "::error::Um ou mais commits falharam na validação."
+            exit 1
+          fi
+
+          echo "Todos os commits validados com sucesso."
+          
