@@ -129,7 +129,7 @@ public class AccountService {
         Account fromAccount = repository.findByNumber(fromNumber);
         Account toAccount = repository.findByNumber(toNumber);
 
-        Double value = fromAccount.getBalance() - amount;
+        Double value = fromAccount.getBalance();
 
         if (value < fromAccount.getMinAmount()) {
           System.out.println("Saldo não pode ser menor que %.2f!".formatted(fromAccount.getMinAmount()));
